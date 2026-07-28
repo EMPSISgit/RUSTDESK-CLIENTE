@@ -67,19 +67,13 @@ Não precisa de máquina de build: o próprio GitHub compila para Windows, Linux
 macOS, Android e iOS.
 
 1. **Fork/clone** deste repositório na sua conta do GitHub.
-2. **Libere a permissão de escrita do Actions** (passo obrigatório em forks
-   novos, feito uma única vez): **Settings → Actions → General → Workflow
-   permissions → "Read and write permissions" → Save**. Sem isso a compilação
-   roda inteira e só falha no fim, em todos os passos `Publish ...`, com
-   `Resource not accessible by integration` — é o `GITHUB_TOKEN` sem permissão
-   para criar o Release.
-3. Edite o `custom.env` (seção 2), commit e push.
-4. Dispare o build de release por **um** destes caminhos:
+2. Edite o `custom.env` (seção 2), commit e push.
+3. Dispare o build de release por **um** destes caminhos:
    - **Tag:** crie e envie uma tag no formato `X.Y.Z` ou `vX.Y.Z`
      (ex.: `git tag v1.4.7-1 && git push origin v1.4.7-1`); ou
    - **Manual:** aba **Actions → Flutter Tag Build → Run workflow**, informando
      o nome da tag no campo que aparece.
-5. Aguarde o workflow terminar (leva bastante tempo — compila todas as
+4. Aguarde o workflow terminar (leva bastante tempo — compila todas as
    plataformas) e baixe os instaladores na aba **Releases** do seu fork.
 5. Publique os instaladores no seu painel, em `panel/public/dist/` do
    [rustdesk-config](https://github.com/comunitariogpt-blip/rustdesk-config)
@@ -129,10 +123,14 @@ multi-resolução, ICNS, tray, Android). Detalhes no
 
 ## 7. Problemas comuns no build
 
-**Todos os passos `Publish ...` falham, mas a compilação passou**
-→ Permissão do Actions. Faça o passo 2 da seção 3 (**Workflow permissions →
-Read and write permissions**) e rode o workflow de novo. Não é preciso
-recompilar nada por fora: é só disparar outra execução.
+**Todos os passos `Publish ...` falham com `Resource not accessible by
+integration`, mas a compilação passou**
+→ O `GITHUB_TOKEN` está sem permissão para criar o Release. Os workflows deste
+fork já declaram `permissions: contents: write`, então **atualize o seu fork**
+(botão **Sync fork** na página do repositório) e rode o build de novo. Se ainda
+assim falhar, a conta/organização está forçando token somente leitura: vá em
+**Settings → Actions → General → Workflow permissions**, marque **"Read and
+write permissions"** e salve.
 
 **O workflow falha imediatamente, em segundos, num arquivo `main.yml`**
 → Um workflow vazio criado por engano pelo botão verde **"New workflow"**.

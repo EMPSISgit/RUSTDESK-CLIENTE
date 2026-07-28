@@ -91,6 +91,9 @@ const String kOptionForceAlwaysRelay = "force-always-relay";
 const String kOptionViewOnly = "view_only";
 const String kOptionEnableLanDiscovery = "enable-lan-discovery";
 const String kOptionWhitelist = "whitelist";
+// Politica enviada pelo painel (rustdesk-config) via /api/heartbeat:
+// "Y" exige que o operador faca login antes de qualquer conexao de saida.
+const String kOptionRequireLogin = "require-login";
 const String kOptionEnableAbr = "enable-abr";
 const String kOptionEnableRecordSession = "enable-record-session";
 const String kOptionDirectServer = "direct-server";

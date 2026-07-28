@@ -2,6 +2,12 @@ name: Flutter Tag Build
 
 on:
   workflow_dispatch:
+    inputs:
+      tag:
+        description: "Nome da tag/release a ser gerado (ex.: v1.4.7-1)"
+        type: string
+        required: false
+        default: "manual-build"
   push:
     tags:
       - 'v[0-9]+.[0-9]+.[0-9]+'
@@ -11,8 +17,13 @@ on:
 
 jobs:
   run-flutter-tag-build:
+    # Necessario para publicar o Release: sem isso o GITHUB_TOKEN e somente
+    # leitura em repositorios novos e todos os passos "Publish ..." falham.
+    permissions:
+      contents: write
     uses: ./.github/workflows/flutter-build.yml
     secrets: inherit
     with:
       upload-artifact: true
-      upload-tag: ${{ github.ref_name }}
+      # Em execucao manual usa a tag informada; no push de tag usa a propria tag.
+      upload-tag: ${{ inputs.tag || github.ref_name }}

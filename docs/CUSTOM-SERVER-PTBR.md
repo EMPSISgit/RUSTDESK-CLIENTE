@@ -67,12 +67,19 @@ Não precisa de máquina de build: o próprio GitHub compila para Windows, Linux
 macOS, Android e iOS.
 
 1. **Fork/clone** deste repositório na sua conta do GitHub.
-2. Edite o `custom.env` (seção 2), commit e push.
-3. Dispare o build de release por **um** destes caminhos:
+2. **Libere a permissão de escrita do Actions** (passo obrigatório em forks
+   novos, feito uma única vez): **Settings → Actions → General → Workflow
+   permissions → "Read and write permissions" → Save**. Sem isso a compilação
+   roda inteira e só falha no fim, em todos os passos `Publish ...`, com
+   `Resource not accessible by integration` — é o `GITHUB_TOKEN` sem permissão
+   para criar o Release.
+3. Edite o `custom.env` (seção 2), commit e push.
+4. Dispare o build de release por **um** destes caminhos:
    - **Tag:** crie e envie uma tag no formato `X.Y.Z` ou `vX.Y.Z`
      (ex.: `git tag v1.4.7-1 && git push origin v1.4.7-1`); ou
-   - **Manual:** aba **Actions → Flutter Tag Build → Run workflow**.
-4. Aguarde o workflow terminar (leva bastante tempo — compila todas as
+   - **Manual:** aba **Actions → Flutter Tag Build → Run workflow**, informando
+     o nome da tag no campo que aparece.
+5. Aguarde o workflow terminar (leva bastante tempo — compila todas as
    plataformas) e baixe os instaladores na aba **Releases** do seu fork.
 5. Publique os instaladores no seu painel, em `panel/public/dist/` do
    [rustdesk-config](https://github.com/comunitariogpt-blip/rustdesk-config)
@@ -117,6 +124,30 @@ de disparar o build. O diretório
 serve de gabarito com todos os formatos necessários (ICO, PNGs
 multi-resolução, ICNS, tray, Android). Detalhes no
 [README do painel, seção 4](https://github.com/comunitariogpt-blip/rustdesk-config#4-sua-pr%C3%B3pria-logo--personaliza%C3%A7%C3%A3o).
+
+---
+
+## 7. Problemas comuns no build
+
+**Todos os passos `Publish ...` falham, mas a compilação passou**
+→ Permissão do Actions. Faça o passo 2 da seção 3 (**Workflow permissions →
+Read and write permissions**) e rode o workflow de novo. Não é preciso
+recompilar nada por fora: é só disparar outra execução.
+
+**O workflow falha imediatamente, em segundos, num arquivo `main.yml`**
+→ Um workflow vazio criado por engano pelo botão verde **"New workflow"**.
+Apague `.github/workflows/main.yml` — os workflows de build já vêm prontos no
+fork, não é preciso criar nenhum.
+
+**O release saiu com o nome "master"**
+→ Execução manual sem informar a tag em versões antigas deste fork. Atualize o
+fork (Sync fork) e informe a tag no campo do **Run workflow**, ou publique via
+`git tag`.
+
+**O cliente compila mas não conecta no servidor**
+→ Confira no log do job o passo *Apply custom server settings*: ele imprime os
+valores aplicados. Se disser "custom.env sem valores preenchidos", o arquivo
+não foi commitado com os dados do seu servidor.
 
 ---
 

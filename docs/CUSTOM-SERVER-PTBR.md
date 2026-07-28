@@ -71,7 +71,8 @@ macOS, Android e iOS.
 3. Dispare o build de release por **um** destes caminhos:
    - **Tag:** crie e envie uma tag no formato `X.Y.Z` ou `vX.Y.Z`
      (ex.: `git tag v1.4.7-1 && git push origin v1.4.7-1`); ou
-   - **Manual:** aba **Actions → Flutter Tag Build → Run workflow**.
+   - **Manual:** aba **Actions → Flutter Tag Build → Run workflow**, informando
+     o nome da tag no campo que aparece.
 4. Aguarde o workflow terminar (leva bastante tempo — compila todas as
    plataformas) e baixe os instaladores na aba **Releases** do seu fork.
 5. Publique os instaladores no seu painel, em `panel/public/dist/` do
@@ -117,6 +118,34 @@ de disparar o build. O diretório
 serve de gabarito com todos os formatos necessários (ICO, PNGs
 multi-resolução, ICNS, tray, Android). Detalhes no
 [README do painel, seção 4](https://github.com/comunitariogpt-blip/rustdesk-config#4-sua-pr%C3%B3pria-logo--personaliza%C3%A7%C3%A3o).
+
+---
+
+## 7. Problemas comuns no build
+
+**Todos os passos `Publish ...` falham com `Resource not accessible by
+integration`, mas a compilação passou**
+→ O `GITHUB_TOKEN` está sem permissão para criar o Release. Os workflows deste
+fork já declaram `permissions: contents: write`, então **atualize o seu fork**
+(botão **Sync fork** na página do repositório) e rode o build de novo. Se ainda
+assim falhar, a conta/organização está forçando token somente leitura: vá em
+**Settings → Actions → General → Workflow permissions**, marque **"Read and
+write permissions"** e salve.
+
+**O workflow falha imediatamente, em segundos, num arquivo `main.yml`**
+→ Um workflow vazio criado por engano pelo botão verde **"New workflow"**.
+Apague `.github/workflows/main.yml` — os workflows de build já vêm prontos no
+fork, não é preciso criar nenhum.
+
+**O release saiu com o nome "master"**
+→ Execução manual sem informar a tag em versões antigas deste fork. Atualize o
+fork (Sync fork) e informe a tag no campo do **Run workflow**, ou publique via
+`git tag`.
+
+**O cliente compila mas não conecta no servidor**
+→ Confira no log do job o passo *Apply custom server settings*: ele imprime os
+valores aplicados. Se disser "custom.env sem valores preenchidos", o arquivo
+não foi commitado com os dados do seu servidor.
 
 ---
 

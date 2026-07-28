@@ -109,7 +109,24 @@ Também aceita `api=` e `relay=`, separados por vírgula. **Limitação:** se a 
 chave pública contiver `/` (caractere inválido em nomes de arquivo no Windows),
 esse truque não funciona — use o build customizado.
 
-## 6. Logo e marca própria
+## 6. Login obrigatório de operadores
+
+Cada build conversa **apenas com o painel embutido nele** (o `API_SERVER` do
+`custom.env`): é dali que vêm os usuários/senhas (tabela `operators` do
+rustdesk-config), o registro de dispositivos e o histórico de conexões. Deploys
+diferentes ficam naturalmente isolados — o build de um servidor nunca consulta
+o painel de outro.
+
+Para **exigir login antes de conectar**, ative no painel:
+**Configurações → Exigir login** (a opção nasce **desligada**). A política
+chega aos clientes pelo heartbeat em ~15 segundos, sem recompilar; ao ligar,
+todo clique em "Conectar" passa a abrir a tela de login se o operador ainda não
+estiver autenticado.
+
+Requisitos: `API_SERVER` preenchido no `custom.env` e cliente compilado a
+partir deste repositório (o RustDesk original não tem essa política).
+
+## 7. Logo e marca própria
 
 Os ícones do aplicativo ficam em `res/` (e `flutter/android/.../mipmap-*` no
 Android). Substitua-os pelos seus **mantendo os mesmos nomes e tamanhos** antes
@@ -121,7 +138,7 @@ multi-resolução, ICNS, tray, Android). Detalhes no
 
 ---
 
-## 7. Problemas comuns no build
+## 8. Problemas comuns no build
 
 **Todos os passos `Publish ...` falham com `Resource not accessible by
 integration`, mas a compilação passou**
@@ -141,6 +158,11 @@ fork, não é preciso criar nenhum.
 → Execução manual sem informar a tag em versões antigas deste fork. Atualize o
 fork (Sync fork) e informe a tag no campo do **Run workflow**, ou publique via
 `git tag`.
+
+**O cliente conecta sem pedir login de operador**
+→ Ative **Configurações → Exigir login** no painel (seção 6) e aguarde ~15 s
+com o cliente aberto. Se continuar, o build é anterior à chegada dessa política
+no branch `master` — sincronize o fork e recompile.
 
 **O cliente compila mas não conecta no servidor**
 → Confira no log do job o passo *Apply custom server settings*: ele imprime os

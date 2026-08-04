@@ -101,11 +101,14 @@ macOS, Android e iOS.
 
 1. **Fork/clone** deste repositório na sua conta do GitHub.
 2. Edite o `custom.env` (seção 2), commit e push.
-3. Dispare o build de release por **um** destes caminhos:
-   - **Tag:** crie e envie uma tag no formato `X.Y.Z` ou `vX.Y.Z`
-     (ex.: `git tag v1.4.7-1 && git push origin v1.4.7-1`); ou
-   - **Manual:** aba **Actions → Flutter Tag Build → Run workflow**, informando
-     o nome da tag no campo que aparece.
+3. Dispare o build: aba **Actions → Flutter Tag Build → Run workflow**,
+   informando o nome da tag no campo que aparece (ex.: `v1.4.7-1`). A tag é
+   criada junto com o release.
+
+   > **Nenhum workflow deste fork roda sozinho.** Os gatilhos automáticos
+   > (build noturno, CI a cada push e build por push de tag) foram desativados
+   > para não consumir minutos/armazenamento do GitHub Actions — todos rodam
+   > apenas por **Run workflow**.
 4. Aguarde o workflow terminar (leva bastante tempo — compila todas as
    plataformas) e baixe os instaladores na aba **Releases** do seu fork.
 5. Publique os instaladores no seu painel, em `panel/public/dist/` do
@@ -196,6 +199,15 @@ assim falhar, a conta/organização está forçando token somente leitura: vá e
 **Settings → Actions → General → Workflow permissions**, marque **"Read and
 write permissions"** e salve.
 
+**Os jobs falham em segundos, sem executar nenhum passo, com
+`The job was not started because your account is locked due to a billing issue`**
+→ Não é erro de código: a conta do GitHub está bloqueada por cobrança. Veja
+[github.com/settings/billing](https://github.com/settings/billing). Actions em
+repositório **público** não gasta minutos, então a origem costuma ser o
+**armazenamento** (artefatos de build e releases) ou uma fatura em aberto de
+outro serviço. Depois de regularizar, o build volta a rodar sem nenhuma
+alteração no código.
+
 **O workflow falha imediatamente, em segundos, num arquivo `main.yml`**
 → Um workflow vazio criado por engano pelo botão verde **"New workflow"**.
 Apague `.github/workflows/main.yml` — os workflows de build já vêm prontos no
@@ -257,7 +269,7 @@ lados no mesmo executável, use `BUILD_VARIANT=completo`.
 # 2. neste repo:
 vim custom.env               # RENDEZVOUS_SERVER / RS_PUB_KEY / API_SERVER
 git commit -am "meu servidor" && git push
-git tag v1.4.7-1 && git push origin v1.4.7-1
-# 3. o release traz os dois portables: -operador.exe e -cliente.exe
+# 3. Actions -> Flutter Tag Build -> Run workflow (informe a tag, ex.: v1.4.7-1)
+# 4. o release traz os dois portables: -operador.exe e -cliente.exe
 # 3. baixe os instaladores em Releases e publique em panel/public/dist/
 ```

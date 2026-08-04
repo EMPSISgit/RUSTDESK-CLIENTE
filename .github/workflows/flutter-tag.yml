@@ -1,5 +1,7 @@
 name: Flutter Tag Build
 
+# Somente manual: o gatilho por push de tag foi desativado para que nenhum
+# build comece sozinho. Informe o nome da tag no campo do "Run workflow".
 on:
   workflow_dispatch:
     inputs:
@@ -8,12 +10,6 @@ on:
         type: string
         required: false
         default: "manual-build"
-  push:
-    tags:
-      - 'v[0-9]+.[0-9]+.[0-9]+'
-      - '[0-9]+.[0-9]+.[0-9]+'
-      - 'v[0-9]+.[0-9]+.[0-9]+-[0-9]+'
-      - '[0-9]+.[0-9]+.[0-9]+-[0-9]+'
 
 jobs:
   run-flutter-tag-build:

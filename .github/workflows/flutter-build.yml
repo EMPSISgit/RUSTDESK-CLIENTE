@@ -98,6 +98,16 @@ jobs:
       - name: Apply custom server settings (custom.env)
         shell: bash
         env:
+          # Variables do repositorio (Settings -> Secrets and variables ->
+          # Actions -> Variables) tem prioridade sobre o custom.env. Assim cada
+          # fork aponta para o seu servidor sem editar arquivo versionado, e o
+          # Sync fork nunca da conflito. Vazias = usa o custom.env.
+          RENDEZVOUS_SERVER: ${{ vars.RENDEZVOUS_SERVER }}
+          RS_PUB_KEY: ${{ vars.RS_PUB_KEY }}
+          API_SERVER: ${{ vars.API_SERVER }}
+          REQUIRE_LOGIN: ${{ vars.REQUIRE_LOGIN }}
+          # Aqui a variante vem da matriz: gera operador e cliente no mesmo
+          # release. Nas demais plataformas vale o BUILD_VARIANT do custom.env.
           BUILD_VARIANT: ${{ matrix.variant }}
         run: python3 ./apply-custom.py || python ./apply-custom.py
 
@@ -313,6 +323,16 @@ jobs:
 
       - name: Apply custom server settings (custom.env)
         shell: bash
+        env:
+          # Variables do repositorio (Settings -> Secrets and variables ->
+          # Actions -> Variables) tem prioridade sobre o custom.env. Assim cada
+          # fork aponta para o seu servidor sem editar arquivo versionado, e o
+          # Sync fork nunca da conflito. Vazias = usa o custom.env.
+          RENDEZVOUS_SERVER: ${{ vars.RENDEZVOUS_SERVER }}
+          RS_PUB_KEY: ${{ vars.RS_PUB_KEY }}
+          API_SERVER: ${{ vars.API_SERVER }}
+          REQUIRE_LOGIN: ${{ vars.REQUIRE_LOGIN }}
+          BUILD_VARIANT: ${{ matrix.variant }}
         run: python3 ./apply-custom.py || python ./apply-custom.py
 
       - name: Install LLVM and Clang
@@ -468,6 +488,16 @@ jobs:
 
       - name: Apply custom server settings (custom.env)
         shell: bash
+        env:
+          # Variables do repositorio (Settings -> Secrets and variables ->
+          # Actions -> Variables) tem prioridade sobre o custom.env. Assim cada
+          # fork aponta para o seu servidor sem editar arquivo versionado, e o
+          # Sync fork nunca da conflito. Vazias = usa o custom.env.
+          RENDEZVOUS_SERVER: ${{ vars.RENDEZVOUS_SERVER }}
+          RS_PUB_KEY: ${{ vars.RS_PUB_KEY }}
+          API_SERVER: ${{ vars.API_SERVER }}
+          REQUIRE_LOGIN: ${{ vars.REQUIRE_LOGIN }}
+          BUILD_VARIANT: ${{ matrix.variant }}
         run: python3 ./apply-custom.py || python ./apply-custom.py
 
       - name: Install flutter
@@ -597,6 +627,16 @@ jobs:
 
       - name: Apply custom server settings (custom.env)
         shell: bash
+        env:
+          # Variables do repositorio (Settings -> Secrets and variables ->
+          # Actions -> Variables) tem prioridade sobre o custom.env. Assim cada
+          # fork aponta para o seu servidor sem editar arquivo versionado, e o
+          # Sync fork nunca da conflito. Vazias = usa o custom.env.
+          RENDEZVOUS_SERVER: ${{ vars.RENDEZVOUS_SERVER }}
+          RS_PUB_KEY: ${{ vars.RS_PUB_KEY }}
+          API_SERVER: ${{ vars.API_SERVER }}
+          REQUIRE_LOGIN: ${{ vars.REQUIRE_LOGIN }}
+          BUILD_VARIANT: ${{ matrix.variant }}
         run: python3 ./apply-custom.py || python ./apply-custom.py
 
       - name: Import the codesign cert
@@ -920,6 +960,16 @@ jobs:
 
       - name: Apply custom server settings (custom.env)
         shell: bash
+        env:
+          # Variables do repositorio (Settings -> Secrets and variables ->
+          # Actions -> Variables) tem prioridade sobre o custom.env. Assim cada
+          # fork aponta para o seu servidor sem editar arquivo versionado, e o
+          # Sync fork nunca da conflito. Vazias = usa o custom.env.
+          RENDEZVOUS_SERVER: ${{ vars.RENDEZVOUS_SERVER }}
+          RS_PUB_KEY: ${{ vars.RS_PUB_KEY }}
+          API_SERVER: ${{ vars.API_SERVER }}
+          REQUIRE_LOGIN: ${{ vars.REQUIRE_LOGIN }}
+          BUILD_VARIANT: ${{ matrix.variant }}
         run: python3 ./apply-custom.py || python ./apply-custom.py
 
       - name: Install flutter
@@ -1196,6 +1246,16 @@ jobs:
 
       - name: Apply custom server settings (custom.env)
         shell: bash
+        env:
+          # Variables do repositorio (Settings -> Secrets and variables ->
+          # Actions -> Variables) tem prioridade sobre o custom.env. Assim cada
+          # fork aponta para o seu servidor sem editar arquivo versionado, e o
+          # Sync fork nunca da conflito. Vazias = usa o custom.env.
+          RENDEZVOUS_SERVER: ${{ vars.RENDEZVOUS_SERVER }}
+          RS_PUB_KEY: ${{ vars.RS_PUB_KEY }}
+          API_SERVER: ${{ vars.API_SERVER }}
+          REQUIRE_LOGIN: ${{ vars.REQUIRE_LOGIN }}
+          BUILD_VARIANT: ${{ matrix.variant }}
         run: python3 ./apply-custom.py || python ./apply-custom.py
 
       - name: Install flutter
@@ -1365,6 +1425,16 @@ jobs:
 
       - name: Apply custom server settings (custom.env)
         shell: bash
+        env:
+          # Variables do repositorio (Settings -> Secrets and variables ->
+          # Actions -> Variables) tem prioridade sobre o custom.env. Assim cada
+          # fork aponta para o seu servidor sem editar arquivo versionado, e o
+          # Sync fork nunca da conflito. Vazias = usa o custom.env.
+          RENDEZVOUS_SERVER: ${{ vars.RENDEZVOUS_SERVER }}
+          RS_PUB_KEY: ${{ vars.RS_PUB_KEY }}
+          API_SERVER: ${{ vars.API_SERVER }}
+          REQUIRE_LOGIN: ${{ vars.REQUIRE_LOGIN }}
+          BUILD_VARIANT: ${{ matrix.variant }}
         run: python3 ./apply-custom.py || python ./apply-custom.py
 
       - name: Set Swap Space
@@ -1699,6 +1769,16 @@ jobs:
 
       - name: Apply custom server settings (custom.env)
         shell: bash
+        env:
+          # Variables do repositorio (Settings -> Secrets and variables ->
+          # Actions -> Variables) tem prioridade sobre o custom.env. Assim cada
+          # fork aponta para o seu servidor sem editar arquivo versionado, e o
+          # Sync fork nunca da conflito. Vazias = usa o custom.env.
+          RENDEZVOUS_SERVER: ${{ vars.RENDEZVOUS_SERVER }}
+          RS_PUB_KEY: ${{ vars.RS_PUB_KEY }}
+          API_SERVER: ${{ vars.API_SERVER }}
+          REQUIRE_LOGIN: ${{ vars.REQUIRE_LOGIN }}
+          BUILD_VARIANT: ${{ matrix.variant }}
         run: python3 ./apply-custom.py || python ./apply-custom.py
 
       - name: Modify vcpkg.json for armv7
@@ -1905,6 +1985,16 @@ jobs:
 
       - name: Apply custom server settings (custom.env)
         shell: bash
+        env:
+          # Variables do repositorio (Settings -> Secrets and variables ->
+          # Actions -> Variables) tem prioridade sobre o custom.env. Assim cada
+          # fork aponta para o seu servidor sem editar arquivo versionado, e o
+          # Sync fork nunca da conflito. Vazias = usa o custom.env.
+          RENDEZVOUS_SERVER: ${{ vars.RENDEZVOUS_SERVER }}
+          RS_PUB_KEY: ${{ vars.RS_PUB_KEY }}
+          API_SERVER: ${{ vars.API_SERVER }}
+          REQUIRE_LOGIN: ${{ vars.REQUIRE_LOGIN }}
+          BUILD_VARIANT: ${{ matrix.variant }}
         run: python3 ./apply-custom.py || python ./apply-custom.py
 
       - name: Download Binary
@@ -1982,6 +2072,16 @@ jobs:
 
       - name: Apply custom server settings (custom.env)
         shell: bash
+        env:
+          # Variables do repositorio (Settings -> Secrets and variables ->
+          # Actions -> Variables) tem prioridade sobre o custom.env. Assim cada
+          # fork aponta para o seu servidor sem editar arquivo versionado, e o
+          # Sync fork nunca da conflito. Vazias = usa o custom.env.
+          RENDEZVOUS_SERVER: ${{ vars.RENDEZVOUS_SERVER }}
+          RS_PUB_KEY: ${{ vars.RS_PUB_KEY }}
+          API_SERVER: ${{ vars.API_SERVER }}
+          REQUIRE_LOGIN: ${{ vars.REQUIRE_LOGIN }}
+          BUILD_VARIANT: ${{ matrix.variant }}
         run: python3 ./apply-custom.py || python ./apply-custom.py
 
       - name: Download Binary
@@ -2047,6 +2147,16 @@ jobs:
 
       - name: Apply custom server settings (custom.env)
         shell: bash
+        env:
+          # Variables do repositorio (Settings -> Secrets and variables ->
+          # Actions -> Variables) tem prioridade sobre o custom.env. Assim cada
+          # fork aponta para o seu servidor sem editar arquivo versionado, e o
+          # Sync fork nunca da conflito. Vazias = usa o custom.env.
+          RENDEZVOUS_SERVER: ${{ vars.RENDEZVOUS_SERVER }}
+          RS_PUB_KEY: ${{ vars.RS_PUB_KEY }}
+          API_SERVER: ${{ vars.API_SERVER }}
+          REQUIRE_LOGIN: ${{ vars.REQUIRE_LOGIN }}
+          BUILD_VARIANT: ${{ matrix.variant }}
         run: python3 ./apply-custom.py || python ./apply-custom.py
 
       - name: Prepare env

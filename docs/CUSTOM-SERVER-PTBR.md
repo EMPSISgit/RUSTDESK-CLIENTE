@@ -59,10 +59,18 @@ automático):
 - `REQUIRE_LOGIN=Y` liga o padrão de login obrigatório em
   `flutter/lib/consts.dart` (veja a seção 7)
 
-Valores vazios mantêm o comportamento padrão do RustDesk. Quem preferir não
-commitar os valores pode defini-los como **GitHub Secrets/Variables de
-ambiente** com os mesmos nomes — variáveis de ambiente têm prioridade sobre o
-arquivo.
+Valores vazios mantêm o comportamento padrão do RustDesk.
+
+### Alternativa recomendada para forks: Variables do GitHub
+
+Em vez de commitar os valores, defina-os em
+**Settings → Secrets and variables → Actions → aba Variables**, com os mesmos
+nomes (`RENDEZVOUS_SERVER`, `RS_PUB_KEY`, `API_SERVER`, `REQUIRE_LOGIN`).
+
+Vantagens: as Variables têm **prioridade sobre o `custom.env`**, então cada
+fork aponta para o seu próprio servidor sem alterar arquivo versionado — e o
+**Sync fork nunca dá conflito** no `custom.env`. Para builds locais, o
+`custom.env` continua valendo normalmente.
 
 ## 3. Dois executáveis: operador e cliente
 

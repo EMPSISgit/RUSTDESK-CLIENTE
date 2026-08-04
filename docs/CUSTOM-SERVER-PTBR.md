@@ -47,6 +47,7 @@ Edite o [`custom.env`](../custom.env) na raiz do projeto:
 RENDEZVOUS_SERVER=rd.exemplo.com
 RS_PUB_KEY=OeVuKk5nlHiXp+APNn0Y3pC1Iwpwn44JGqrQCsWqmBw=
 API_SERVER=https://rd.exemplo.com
+REQUIRE_LOGIN=Y
 ```
 
 É só isso. O script [`apply-custom.py`](../apply-custom.py) injeta esses
@@ -55,6 +56,8 @@ automático):
 
 - `RENDEZVOUS_SERVERS` e `RS_PUB_KEY` em `libs/hbb_common/src/config.rs`
 - fallback da API em `src/common.rs`
+- `REQUIRE_LOGIN=Y` liga o padrão de login obrigatório em
+  `flutter/lib/consts.dart` (veja a seção 6)
 
 Valores vazios mantêm o comportamento padrão do RustDesk. Quem preferir não
 commitar os valores pode defini-los como **GitHub Secrets/Variables de
@@ -123,6 +126,11 @@ chega aos clientes pelo heartbeat em ~15 segundos, sem recompilar; ao ligar,
 todo clique em "Conectar" passa a abrir a tela de login se o operador ainda não
 estiver autenticado.
 
+Com `REQUIRE_LOGIN=Y` no `custom.env`, o login já é obrigatório **desde o
+primeiro uso**, antes mesmo do primeiro heartbeat — recomendado para builds de
+operador. Depois que o painel responde, o valor de lá (Y/N) prevalece; ou seja,
+o painel continua sendo o controle central.
+
 Requisitos: `API_SERVER` preenchido no `custom.env` e cliente compilado a
 partir deste repositório (o RustDesk original não tem essa política).
 
@@ -168,6 +176,26 @@ no branch `master` — sincronize o fork e recompile.
 → Confira no log do job o passo *Apply custom server settings*: ele imprime os
 valores aplicados. Se disser "custom.env sem valores preenchidos", o arquivo
 não foi commitado com os dados do seu servidor.
+
+**O painel mostra os dispositivos online, mas conectar falha ("offline" /
+"não está pronto" / timeout)**
+→ O status "online" do painel usa HTTP; a conexão remota usa outras portas. A
+causa mais comum é o firewall liberar só TCP: o registro de ID e o hole
+punching usam **UDP 21116**, que precisa de regra própria (na AWS, TCP e UDP
+são regras separadas no Security Group). Libere `21115–21119/tcp` **e**
+`21116/udp`. Teste: a barra inferior do cliente deve dizer **"Pronto"**; se
+disser "Não está pronto", o cliente não alcançou o hbbs.
+
+**Erro "Key mismatch" / "Chave incompatível" ao conectar**
+→ O `RS_PUB_KEY` do `custom.env` não é o mesmo do servidor. Ele deve ser o
+conteúdo exato de `data/id_ed25519.pub` (uma linha, terminada em `=`). Se o
+servidor foi recriado (nova pasta `data/`), a chave mudou — recompile com a
+nova.
+
+**Ambas as pontas precisam do cliente customizado**
+→ Só dá para conectar em máquinas cujo cliente também aponte para o seu
+servidor (este build). Um RustDesk oficial instalado na máquina remota registra
+nos servidores públicos e nunca será encontrado pelo seu ID server.
 
 ---
 

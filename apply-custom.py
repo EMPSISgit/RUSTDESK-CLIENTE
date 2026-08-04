@@ -27,10 +27,16 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 ENV_FILE = os.path.join(ROOT, "custom.env")
 CONFIG_RS = os.path.join(ROOT, "libs", "hbb_common", "src", "config.rs")
 COMMON_RS = os.path.join(ROOT, "src", "common.rs")
+CONSTS_DART = os.path.join(ROOT, "flutter", "lib", "consts.dart")
 
 
 def load_env():
-    values = {"RENDEZVOUS_SERVER": "", "RS_PUB_KEY": "", "API_SERVER": ""}
+    values = {
+        "RENDEZVOUS_SERVER": "",
+        "RS_PUB_KEY": "",
+        "API_SERVER": "",
+        "REQUIRE_LOGIN": "",
+    }
     if os.path.isfile(ENV_FILE):
         with open(ENV_FILE, "r", encoding="utf-8") as f:
             for line in f:
@@ -106,6 +112,15 @@ def main():
             r'"https://admin\.rustdesk\.com"\.to_owned\(\)',
             '"%s".to_owned()' % values["API_SERVER"],
             "API_SERVER = %s" % values["API_SERVER"],
+            check_only,
+        )
+
+    if values["REQUIRE_LOGIN"].lower() in ("y", "yes", "s", "sim", "1", "true"):
+        patch_file(
+            CONSTS_DART,
+            r'const bool kRequireLoginDefault = (?:false|true);',
+            'const bool kRequireLoginDefault = true;',
+            "REQUIRE_LOGIN = Y (login obrigatorio desde o primeiro uso)",
             check_only,
         )
 

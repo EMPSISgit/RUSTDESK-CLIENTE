@@ -90,6 +90,22 @@ def rust_map(pairs):
     return "RwLock::new(vec![%s].into_iter().collect())" % items
 
 
+def patch_static_map(path, name, pairs, label, check_only):
+    """Reescreve um lazy_static RwLock<HashMap<..>> do config.rs.
+
+    O padrao aceita tanto o valor original (Default::default()) quanto um
+    ja injetado, para que trocar de variante sobrescreva a anterior.
+    """
+    patch_file(
+        path,
+        r'pub static ref %s: RwLock<HashMap<String, String>> = [^;]+;' % name,
+        'pub static ref %s: RwLock<HashMap<String, String>> = %s;'
+        % (name, rust_map(pairs)),
+        label,
+        check_only,
+    )
+
+
 def load_env():
     values = {
         "RENDEZVOUS_SERVER": "",
@@ -213,22 +229,31 @@ def main():
     )
 
     spec = VARIANTS[variant]
-    patch_file(
-        CONFIG_RS,
-        r'pub static ref HARD_SETTINGS: RwLock<HashMap<String, String>> = [^;]+;',
-        'pub static ref HARD_SETTINGS: RwLock<HashMap<String, String>> = %s;'
-        % rust_map(spec["hard"]),
-        "BUILD_VARIANT = %s (HARD_SETTINGS)" % variant,
-        check_only,
-    )
-    patch_file(
-        CONFIG_RS,
-        r'pub static ref BUILTIN_SETTINGS: RwLock<HashMap<String, String>> = [^;]+;',
-        'pub static ref BUILTIN_SETTINGS: RwLock<HashMap<String, String>> = %s;'
-        % rust_map(spec["builtin"]),
-        "BUILD_VARIANT = %s (BUILTIN_SETTINGS)" % variant,
-        check_only,
-    )
+    patch_static_map(CONFIG_RS, "HARD_SETTINGS", spec["hard"],
+                     "BUILD_VARIANT = %s (HARD_SETTINGS)" % variant, check_only)
+    patch_static_map(CONFIG_RS, "BUILTIN_SETTINGS", spec["builtin"],
+                     "BUILD_VARIANT = %s (BUILTIN_SETTINGS)" % variant, check_only)
+
+    # api-server precisa entrar como OPCAO, nao so como fallback em common.rs.
+    # get_api_server_() so usa aquele fallback quando NAO ha servidor de
+    # rendezvous configurado; havendo, ele deriva a API de
+    # http://<rendezvous>:21114 e ignora o valor embutido. Como OVERWRITE, o
+    # valor vence a derivacao e tambem qualquer config local antiga da maquina.
+    overwrite = []
+    if values["API_SERVER"]:
+        overwrite.append(("api-server", values["API_SERVER"]))
+    # Sem aviso de "nova versao disponivel": este e um cliente de marca
+    # propria, atualizado pelo painel, nao pelos releases do RustDesk.
+    # enable-check-update desliga a checagem da tela inicial; allow-auto-update
+    # desliga o updater periodico (updater.rs nao consulta a primeira chave).
+    overwrite.append(("allow-auto-update", "N"))
+    patch_static_map(CONFIG_RS, "OVERWRITE_SETTINGS", overwrite,
+                     "API_SERVER embutido + auto-update off (OVERWRITE_SETTINGS)",
+                     check_only)
+    patch_static_map(CONFIG_RS, "OVERWRITE_LOCAL_SETTINGS",
+                     [("enable-check-update", "N")],
+                     "Aviso de nova versao desativado (OVERWRITE_LOCAL_SETTINGS)",
+                     check_only)
 
     print("Pronto. Agora compile normalmente (build.py / cargo / flutter).")
 

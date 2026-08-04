@@ -2531,10 +2531,14 @@ connectMainDesktop(String id,
   }
 }
 
-/// Politica central de login, enviada pelo painel em /api/heartbeat.
+/// Politica central de login: o valor Y/N enviado pelo painel em
+/// /api/heartbeat prevalece; sem politica recebida ainda, vale o padrao
+/// embutido no build (kRequireLoginDefault, definido pelo custom.env).
 bool isLoginRequiredByPolicy() {
   if (bind.isDisableAccount()) return false;
-  return bind.mainGetOptionSync(key: kOptionRequireLogin) == 'Y';
+  final policy = bind.mainGetOptionSync(key: kOptionRequireLogin);
+  if (policy.isNotEmpty) return policy == 'Y';
+  return kRequireLoginDefault;
 }
 
 /// Garante que ha um operador autenticado quando o painel exige login.

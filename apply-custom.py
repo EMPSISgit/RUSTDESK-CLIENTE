@@ -5,18 +5,22 @@ apply-custom.py — embute a configuracao de servidor do `custom.env` no codigo
 antes da compilacao.
 
 Uso:
-    python3 apply-custom.py            # le custom.env e aplica os patches
-    python3 apply-custom.py --check    # so mostra o que seria feito
+    python3 apply-custom.py                    # le custom.env e aplica os patches
+    python3 apply-custom.py --check            # so mostra o que seria feito
+    python3 apply-custom.py --variant operador # forca a variante (ignora o .env)
 
 O que ele altera (apenas se o valor correspondente estiver preenchido):
   1. libs/hbb_common/src/config.rs -> RENDEZVOUS_SERVERS  (RENDEZVOUS_SERVER)
   2. libs/hbb_common/src/config.rs -> RS_PUB_KEY          (RS_PUB_KEY)
   3. src/common.rs                 -> fallback da API      (API_SERVER)
+  4. flutter/lib/consts.dart       -> login obrigatorio    (REQUIRE_LOGIN)
+  5. libs/hbb_common/src/config.rs -> HARD/BUILTIN_SETTINGS (BUILD_VARIANT)
 
 Variaveis de ambiente com os mesmos nomes tem prioridade sobre o custom.env
 (util para configurar via GitHub Secrets sem commitar valores).
 
-O script e idempotente: pode rodar varias vezes sem efeito colateral.
+O script e idempotente: pode rodar varias vezes sem efeito colateral, e
+trocar de variante sobrescreve a anterior.
 """
 
 import os
@@ -27,10 +31,73 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 ENV_FILE = os.path.join(ROOT, "custom.env")
 CONFIG_RS = os.path.join(ROOT, "libs", "hbb_common", "src", "config.rs")
 COMMON_RS = os.path.join(ROOT, "src", "common.rs")
+CONSTS_DART = os.path.join(ROOT, "flutter", "lib", "consts.dart")
+
+# ---------------------------------------------------------------------------
+# Variantes de build. As chaves abaixo sao opcoes nativas do RustDesk:
+#   conn-type=outgoing    so conecta em outros (esconde o proprio ID/senha)
+#   conn-type=incoming    so recebe conexao (esconde o campo de ID remoto)
+#   disable-installation  remove a opcao de instalar (build portable)
+#   disable-account       remove login/conta da interface
+#   disable-settings      remove o menu de configuracoes
+# ---------------------------------------------------------------------------
+VARIANTS = {
+    "operador": {
+        "hard": [
+            ("conn-type", "outgoing"),
+            ("disable-installation", "Y"),
+        ],
+        "builtin": [
+            ("hide-powered-by-me", "Y"),
+        ],
+    },
+    "cliente": {
+        "hard": [
+            ("conn-type", "incoming"),
+            ("disable-installation", "Y"),
+            ("disable-account", "Y"),
+            ("disable-settings", "Y"),
+        ],
+        "builtin": [
+            ("hide-powered-by-me", "Y"),
+            ("disable-settings", "Y"),
+            ("hide-server-settings", "Y"),
+            ("hide-security-settings", "Y"),
+            ("hide-network-settings", "Y"),
+            ("hide-proxy-settings", "Y"),
+            ("hide-websocket-settings", "Y"),
+        ],
+    },
+    "completo": {"hard": [], "builtin": [("hide-powered-by-me", "Y")]},
+}
+
+# Aceita sinonimos em pt/en para a mesma variante.
+VARIANT_ALIASES = {
+    "operador": "operador", "operator": "operador", "op": "operador",
+    "cliente": "cliente", "client": "cliente", "qs": "cliente",
+    "suporte": "cliente", "quicksupport": "cliente",
+    "completo": "completo", "full": "completo", "": "completo",
+}
+
+
+def rust_map(pairs):
+    """Gera a expressao Rust de um HashMap<String, String> para lazy_static."""
+    if not pairs:
+        return "Default::default()"
+    items = ",".join(
+        '("%s".to_owned(),"%s".to_owned())' % (k, v) for k, v in pairs
+    )
+    return "RwLock::new(vec![%s].into_iter().collect())" % items
 
 
 def load_env():
-    values = {"RENDEZVOUS_SERVER": "", "RS_PUB_KEY": "", "API_SERVER": ""}
+    values = {
+        "RENDEZVOUS_SERVER": "",
+        "RS_PUB_KEY": "",
+        "API_SERVER": "",
+        "REQUIRE_LOGIN": "",
+        "BUILD_VARIANT": "",
+    }
     if os.path.isfile(ENV_FILE):
         with open(ENV_FILE, "r", encoding="utf-8") as f:
             for line in f:
@@ -68,11 +135,29 @@ def patch_file(path, pattern, replacement, label, check_only):
     print(f"OK  : {label} aplicado em {os.path.relpath(path, ROOT)}")
 
 
+def resolve_variant(values):
+    """Le a variante de --variant, do ambiente ou do custom.env, nesta ordem."""
+    raw = values["BUILD_VARIANT"]
+    if "--variant" in sys.argv:
+        i = sys.argv.index("--variant")
+        if i + 1 >= len(sys.argv):
+            print("ERRO: --variant exige um valor (operador | cliente | completo).")
+            sys.exit(1)
+        raw = sys.argv[i + 1]
+    raw = raw.strip().lower()
+    if raw not in VARIANT_ALIASES:
+        print("ERRO: BUILD_VARIANT invalido: %r" % raw)
+        print("      Use: operador, cliente ou completo.")
+        sys.exit(1)
+    return VARIANT_ALIASES[raw]
+
+
 def main():
     check_only = "--check" in sys.argv
     values = load_env()
+    variant = resolve_variant(values)
 
-    if not any(values.values()):
+    if not any(values.values()) and variant == "completo":
         print("custom.env sem valores preenchidos — nada a fazer (build padrao).")
         return
 
@@ -108,6 +193,42 @@ def main():
             "API_SERVER = %s" % values["API_SERVER"],
             check_only,
         )
+
+    # O build "cliente" nao tem login; forcar REQUIRE_LOGIN nele so criaria um
+    # dialogo que a propria variante desabilita (disable-account).
+    require_login = values["REQUIRE_LOGIN"].lower() in (
+        "y", "yes", "s", "sim", "1", "true"
+    )
+    effective_login = require_login and variant != "cliente"
+    label = "REQUIRE_LOGIN = %s" % ("Y" if effective_login else "N")
+    if require_login and not effective_login:
+        label += " (ignorado: a variante 'cliente' nao tem login)"
+    patch_file(
+        CONSTS_DART,
+        r'const bool kRequireLoginDefault = (?:false|true);',
+        'const bool kRequireLoginDefault = %s;'
+        % ("true" if effective_login else "false"),
+        label,
+        check_only,
+    )
+
+    spec = VARIANTS[variant]
+    patch_file(
+        CONFIG_RS,
+        r'pub static ref HARD_SETTINGS: RwLock<HashMap<String, String>> = [^;]+;',
+        'pub static ref HARD_SETTINGS: RwLock<HashMap<String, String>> = %s;'
+        % rust_map(spec["hard"]),
+        "BUILD_VARIANT = %s (HARD_SETTINGS)" % variant,
+        check_only,
+    )
+    patch_file(
+        CONFIG_RS,
+        r'pub static ref BUILTIN_SETTINGS: RwLock<HashMap<String, String>> = [^;]+;',
+        'pub static ref BUILTIN_SETTINGS: RwLock<HashMap<String, String>> = %s;'
+        % rust_map(spec["builtin"]),
+        "BUILD_VARIANT = %s (BUILTIN_SETTINGS)" % variant,
+        check_only,
+    )
 
     print("Pronto. Agora compile normalmente (build.py / cargo / flutter).")
 

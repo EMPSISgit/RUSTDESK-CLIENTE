@@ -47,6 +47,7 @@ Edite o [`custom.env`](../custom.env) na raiz do projeto:
 RENDEZVOUS_SERVER=rd.exemplo.com
 RS_PUB_KEY=OeVuKk5nlHiXp+APNn0Y3pC1Iwpwn44JGqrQCsWqmBw=
 API_SERVER=https://rd.exemplo.com
+REQUIRE_LOGIN=Y
 ```
 
 É só isso. O script [`apply-custom.py`](../apply-custom.py) injeta esses
@@ -55,24 +56,67 @@ automático):
 
 - `RENDEZVOUS_SERVERS` e `RS_PUB_KEY` em `libs/hbb_common/src/config.rs`
 - fallback da API em `src/common.rs`
+- `REQUIRE_LOGIN=Y` liga o padrão de login obrigatório em
+  `flutter/lib/consts.dart` (veja a seção 7)
 
-Valores vazios mantêm o comportamento padrão do RustDesk. Quem preferir não
-commitar os valores pode defini-los como **GitHub Secrets/Variables de
-ambiente** com os mesmos nomes — variáveis de ambiente têm prioridade sobre o
-arquivo.
+Valores vazios mantêm o comportamento padrão do RustDesk.
 
-## 3. Compilar pelo GitHub Actions (recomendado)
+### Alternativa recomendada para forks: Variables do GitHub
+
+Em vez de commitar os valores, defina-os em
+**Settings → Secrets and variables → Actions → aba Variables**, com os mesmos
+nomes (`RENDEZVOUS_SERVER`, `RS_PUB_KEY`, `API_SERVER`, `REQUIRE_LOGIN`).
+
+Vantagens: as Variables têm **prioridade sobre o `custom.env`**, então cada
+fork aponta para o seu próprio servidor sem alterar arquivo versionado — e o
+**Sync fork nunca dá conflito** no `custom.env`. Para builds locais, o
+`custom.env` continua valendo normalmente.
+
+## 3. Dois executáveis: operador e cliente
+
+O `custom.env` tem a variável **`BUILD_VARIANT`**, que define o que aparece na
+interface do executável gerado:
+
+| `BUILD_VARIANT` | O que mostra | Para quem |
+|-----------------|--------------|-----------|
+| `operador` | Campo de ID remoto + login. **Não** mostra o próprio ID/senha. | Quem presta o suporte |
+| `cliente`  | **Apenas** o próprio ID e senha, para ditar ao operador. Sem login, sem campo de ID remoto, sem configurações. | Quem recebe o suporte |
+| `completo` (ou vazio) | RustDesk normal: conecta e recebe. | Uso geral |
+
+Nenhuma das variantes tem opção de instalação — as duas são **portable**
+(rodam sem instalar).
+
+**O build do GitHub Actions gera as duas de uma vez**, no mesmo release:
+
+```text
+rustdesk-1.4.7-x86_64-operador.exe
+rustdesk-1.4.7-x86_64-cliente.exe
+```
+
+Ou seja, o `BUILD_VARIANT` do `custom.env` **não afeta o Windows no CI** (lá a
+variante vem da matriz do workflow); ele vale para builds locais e para as
+demais plataformas.
+
+Por baixo, o `apply-custom.py` escreve as opções nativas do RustDesk
+(`conn-type`, `disable-installation`, `disable-account`, `disable-settings`) em
+`HARD_SETTINGS`/`BUILTIN_SETTINGS` — o mesmo mecanismo dos clientes
+customizados oficiais.
+
+## 4. Compilar pelo GitHub Actions (recomendado)
 
 Não precisa de máquina de build: o próprio GitHub compila para Windows, Linux,
 macOS, Android e iOS.
 
 1. **Fork/clone** deste repositório na sua conta do GitHub.
 2. Edite o `custom.env` (seção 2), commit e push.
-3. Dispare o build de release por **um** destes caminhos:
-   - **Tag:** crie e envie uma tag no formato `X.Y.Z` ou `vX.Y.Z`
-     (ex.: `git tag v1.4.7-1 && git push origin v1.4.7-1`); ou
-   - **Manual:** aba **Actions → Flutter Tag Build → Run workflow**, informando
-     o nome da tag no campo que aparece.
+3. Dispare o build: aba **Actions → Flutter Tag Build → Run workflow**,
+   informando o nome da tag no campo que aparece (ex.: `v1.4.7-1`). A tag é
+   criada junto com o release.
+
+   > **Nenhum workflow deste fork roda sozinho.** Os gatilhos automáticos
+   > (build noturno, CI a cada push e build por push de tag) foram desativados
+   > para não consumir minutos/armazenamento do GitHub Actions — todos rodam
+   > apenas por **Run workflow**.
 4. Aguarde o workflow terminar (leva bastante tempo — compila todas as
    plataformas) e baixe os instaladores na aba **Releases** do seu fork.
 5. Publique os instaladores no seu painel, em `panel/public/dist/` do
@@ -83,20 +127,29 @@ macOS, Android e iOS.
 > `MACOS_P12_BASE64` etc., os binários saem sem assinatura digital — funcionam,
 > mas o sistema operacional pode exibir avisos na instalação.
 
-## 4. Compilar localmente
+## 5. Compilar localmente
 
 Siga a [documentação oficial de build](https://rustdesk.com/docs/en/dev/build/)
 para preparar o ambiente (Rust, vcpkg, Flutter). A única diferença é rodar o
 script **antes** de compilar:
 
 ```bash
-python3 apply-custom.py      # (Windows: python apply-custom.py)
-python3 build.py --flutter   # ou o comando de build da sua plataforma
+python3 apply-custom.py --variant operador   # (Windows: python apply-custom.py ...)
+python3 build.py --portable --flutter        # ou o comando da sua plataforma
 ```
 
-O script é idempotente — pode rodar quantas vezes quiser.
+Para gerar o segundo executável, rode de novo trocando a variante:
 
-## 5. Alternativa sem recompilar (Windows)
+```bash
+python3 apply-custom.py --variant cliente
+python3 build.py --portable --flutter
+```
+
+Sem `--variant`, vale o `BUILD_VARIANT` do `custom.env`. O script é idempotente
+e trocar de variante sobrescreve a anterior — mas **guarde o .exe da primeira
+antes de compilar a segunda**, senão o build sobrescreve a saída.
+
+## 6. Alternativa sem recompilar (Windows)
 
 O RustDesk lê configuração embutida **no nome do arquivo** do executável. Para
 um teste rápido, renomeie o instalador para:
@@ -109,7 +162,7 @@ Também aceita `api=` e `relay=`, separados por vírgula. **Limitação:** se a 
 chave pública contiver `/` (caractere inválido em nomes de arquivo no Windows),
 esse truque não funciona — use o build customizado.
 
-## 6. Login obrigatório de operadores
+## 7. Login obrigatório de operadores
 
 Cada build conversa **apenas com o painel embutido nele** (o `API_SERVER` do
 `custom.env`): é dali que vêm os usuários/senhas (tabela `operators` do
@@ -123,10 +176,15 @@ chega aos clientes pelo heartbeat em ~15 segundos, sem recompilar; ao ligar,
 todo clique em "Conectar" passa a abrir a tela de login se o operador ainda não
 estiver autenticado.
 
+Com `REQUIRE_LOGIN=Y` no `custom.env`, o login já é obrigatório **desde o
+primeiro uso**, antes mesmo do primeiro heartbeat — recomendado para builds de
+operador. Depois que o painel responde, o valor de lá (Y/N) prevalece; ou seja,
+o painel continua sendo o controle central.
+
 Requisitos: `API_SERVER` preenchido no `custom.env` e cliente compilado a
 partir deste repositório (o RustDesk original não tem essa política).
 
-## 7. Logo e marca própria
+## 8. Logo e marca própria
 
 Os ícones do aplicativo ficam em `res/` (e `flutter/android/.../mipmap-*` no
 Android). Substitua-os pelos seus **mantendo os mesmos nomes e tamanhos** antes
@@ -138,7 +196,7 @@ multi-resolução, ICNS, tray, Android). Detalhes no
 
 ---
 
-## 8. Problemas comuns no build
+## 9. Problemas comuns no build
 
 **Todos os passos `Publish ...` falham com `Resource not accessible by
 integration`, mas a compilação passou**
@@ -148,6 +206,15 @@ fork já declaram `permissions: contents: write`, então **atualize o seu fork**
 assim falhar, a conta/organização está forçando token somente leitura: vá em
 **Settings → Actions → General → Workflow permissions**, marque **"Read and
 write permissions"** e salve.
+
+**Os jobs falham em segundos, sem executar nenhum passo, com
+`The job was not started because your account is locked due to a billing issue`**
+→ Não é erro de código: a conta do GitHub está bloqueada por cobrança. Veja
+[github.com/settings/billing](https://github.com/settings/billing). Actions em
+repositório **público** não gasta minutos, então a origem costuma ser o
+**armazenamento** (artefatos de build e releases) ou uma fatura em aberto de
+outro serviço. Depois de regularizar, o build volta a rodar sem nenhuma
+alteração no código.
 
 **O workflow falha imediatamente, em segundos, num arquivo `main.yml`**
 → Um workflow vazio criado por engano pelo botão verde **"New workflow"**.
@@ -160,7 +227,7 @@ fork (Sync fork) e informe a tag no campo do **Run workflow**, ou publique via
 `git tag`.
 
 **O cliente conecta sem pedir login de operador**
-→ Ative **Configurações → Exigir login** no painel (seção 6) e aguarde ~15 s
+→ Ative **Configurações → Exigir login** no painel (seção 7) e aguarde ~15 s
 com o cliente aberto. Se continuar, o build é anterior à chegada dessa política
 no branch `master` — sincronize o fork e recompile.
 
@@ -168,6 +235,38 @@ no branch `master` — sincronize o fork e recompile.
 → Confira no log do job o passo *Apply custom server settings*: ele imprime os
 valores aplicados. Se disser "custom.env sem valores preenchidos", o arquivo
 não foi commitado com os dados do seu servidor.
+
+**Conectava antes, mas parou de conectar depois que o operador fez login**
+→ Já corrigido no `master`. O `access_token` gravado no login fazia o cliente
+exigir o handshake `secure_tcp` com o servidor de rendezvous — recurso que só o
+RustDesk Pro tem, e que o hbbs OSS não implementa. Sincronize o fork e
+recompile.
+
+**O painel mostra os dispositivos online, mas conectar falha ("offline" /
+"não está pronto" / timeout)**
+→ O status "online" do painel usa HTTP; a conexão remota usa outras portas. A
+causa mais comum é o firewall liberar só TCP: o registro de ID e o hole
+punching usam **UDP 21116**, que precisa de regra própria (na AWS, TCP e UDP
+são regras separadas no Security Group). Libere `21115–21119/tcp` **e**
+`21116/udp`. Teste: a barra inferior do cliente deve dizer **"Pronto"**; se
+disser "Não está pronto", o cliente não alcançou o hbbs.
+
+**Erro "Key mismatch" / "Chave incompatível" ao conectar**
+→ O `RS_PUB_KEY` do `custom.env` não é o mesmo do servidor. Ele deve ser o
+conteúdo exato de `data/id_ed25519.pub` (uma linha, terminada em `=`). Se o
+servidor foi recriado (nova pasta `data/`), a chave mudou — recompile com a
+nova.
+
+**Ambas as pontas precisam do cliente customizado**
+→ Só dá para conectar em máquinas cujo cliente também aponte para o seu
+servidor (este build). Um RustDesk oficial instalado na máquina remota registra
+nos servidores públicos e nunca será encontrado pelo seu ID server. Na prática:
+o operador usa o `-operador.exe` e a máquina atendida roda o `-cliente.exe`.
+
+**O executável do operador não mostra o próprio ID (ou o do cliente não tem
+onde digitar o ID remoto)**
+→ Isso é o comportamento correto das variantes (seção 3). Se precisar dos dois
+lados no mesmo executável, use `BUILD_VARIANT=completo`.
 
 ---
 
@@ -178,6 +277,7 @@ não foi commitado com os dados do seu servidor.
 # 2. neste repo:
 vim custom.env               # RENDEZVOUS_SERVER / RS_PUB_KEY / API_SERVER
 git commit -am "meu servidor" && git push
-git tag v1.4.7-1 && git push origin v1.4.7-1
+# 3. Actions -> Flutter Tag Build -> Run workflow (informe a tag, ex.: v1.4.7-1)
+# 4. o release traz os dois portables: -operador.exe e -cliente.exe
 # 3. baixe os instaladores em Releases e publique em panel/public/dist/
 ```

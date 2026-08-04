@@ -55,7 +55,11 @@ valores no código antes da compilação (nos workflows do GitHub Actions isso �
 automático):
 
 - `RENDEZVOUS_SERVERS` e `RS_PUB_KEY` em `libs/hbb_common/src/config.rs`
-- fallback da API em `src/common.rs`
+- `API_SERVER` como opção embutida (`OVERWRITE_SETTINGS`), além do fallback em
+  `src/common.rs`
+- avisos de "nova versão disponível" desligados (`enable-check-update=N` e
+  `allow-auto-update=N`) — este cliente é atualizado por você, não pelos
+  releases do RustDesk
 - `REQUIRE_LOGIN=Y` liga o padrão de login obrigatório em
   `flutter/lib/consts.dart` (veja a seção 7)
 
@@ -235,6 +239,13 @@ no branch `master` — sincronize o fork e recompile.
 → Confira no log do job o passo *Apply custom server settings*: ele imprime os
 valores aplicados. Se disser "custom.env sem valores preenchidos", o arquivo
 não foi commitado com os dados do seu servidor.
+
+**O login falha com `TimedOut` numa URL tipo `http://<ip>:21114/api/login`**
+→ O `API_SERVER` não foi embutido, e o cliente derivou a URL da API a partir do
+servidor de ID (`porta 21116 − 2`). Corrigido a partir de agosto/2026: o
+`API_SERVER` passou a ser gravado como opção embutida, que vence essa
+derivação. Sincronize o fork e recompile. Confirme no log do job, no passo
+*Apply custom server settings*, a linha `API_SERVER embutido`.
 
 **Conectava antes, mas parou de conectar depois que o operador fez login**
 → Já corrigido no `master`. O `access_token` gravado no login fazia o cliente

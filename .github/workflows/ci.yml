@@ -11,9 +11,6 @@ env:
 # e consumiam minutos do Actions. Rode manualmente em Actions -> Run workflow.
 on:
   workflow_dispatch:
-      - "res/**"
-      - "appimage/**"
-      - "flatpak/**"
 
 jobs:
   # ensure_cargo_fmt:

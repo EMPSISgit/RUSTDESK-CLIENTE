@@ -239,7 +239,16 @@ def main():
     # rendezvous configurado; havendo, ele deriva a API de
     # http://<rendezvous>:21114 e ignora o valor embutido. Como OVERWRITE, o
     # valor vence a derivacao e tambem qualquer config local antiga da maquina.
+    # As constantes RENDEZVOUS_SERVERS / RS_PUB_KEY sao apenas o PADRAO: a
+    # config local da maquina (%APPDATA%/RustDesk) vence sobre elas. Numa
+    # maquina que ja rodou outro build (ou o RustDesk oficial), o servidor
+    # antigo continuaria valendo. Gravando tambem em OVERWRITE_SETTINGS, o
+    # servidor do build vence qualquer config preexistente.
     overwrite = []
+    if values["RENDEZVOUS_SERVER"]:
+        overwrite.append(("custom-rendezvous-server", values["RENDEZVOUS_SERVER"]))
+    if values["RS_PUB_KEY"]:
+        overwrite.append(("key", values["RS_PUB_KEY"]))
     if values["API_SERVER"]:
         overwrite.append(("api-server", values["API_SERVER"]))
     # Sem aviso de "nova versao disponivel": este e um cliente de marca
@@ -248,8 +257,8 @@ def main():
     # desliga o updater periodico (updater.rs nao consulta a primeira chave).
     overwrite.append(("allow-auto-update", "N"))
     patch_static_map(CONFIG_RS, "OVERWRITE_SETTINGS", overwrite,
-                     "API_SERVER embutido + auto-update off (OVERWRITE_SETTINGS)",
-                     check_only)
+                     "servidor/chave/API embutidos + auto-update off "
+                     "(OVERWRITE_SETTINGS)", check_only)
     patch_static_map(CONFIG_RS, "OVERWRITE_LOCAL_SETTINGS",
                      [("enable-check-update", "N")],
                      "Aviso de nova versao desativado (OVERWRITE_LOCAL_SETTINGS)",

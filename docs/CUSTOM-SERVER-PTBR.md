@@ -55,8 +55,10 @@ valores no código antes da compilação (nos workflows do GitHub Actions isso �
 automático):
 
 - `RENDEZVOUS_SERVERS` e `RS_PUB_KEY` em `libs/hbb_common/src/config.rs`
-- `API_SERVER` como opção embutida (`OVERWRITE_SETTINGS`), além do fallback em
-  `src/common.rs`
+- servidor, chave e API também como **opções embutidas** (`OVERWRITE_SETTINGS`),
+  que vencem a configuração local da máquina — sem isso, um computador que já
+  rodou outro build (ou o RustDesk oficial) continuaria usando o servidor
+  antigo, porque as constantes acima são apenas o *padrão*
 - avisos de "nova versão disponível" desligados (`enable-check-update=N` e
   `allow-auto-update=N`) — este cliente é atualizado por você, não pelos
   releases do RustDesk
@@ -239,6 +241,13 @@ no branch `master` — sincronize o fork e recompile.
 → Confira no log do job o passo *Apply custom server settings*: ele imprime os
 valores aplicados. Se disser "custom.env sem valores preenchidos", o arquivo
 não foi commitado com os dados do seu servidor.
+
+**O executável usa o servidor de OUTRO deploy (IP que não é o do `custom.env`)**
+→ Acontece em máquinas que já rodaram outro build do RustDesk: a configuração
+local (`%APPDATA%\RustDesk`) tinha prioridade sobre o servidor embutido.
+Corrigido a partir de agosto/2026 — o servidor do build agora vence a config
+local. Sincronize o fork e recompile. Para limpar o estado antigo de uma
+máquina de teste, feche o app e apague a pasta `%APPDATA%\RustDesk`.
 
 **O login falha com `TimedOut` numa URL tipo `http://<ip>:21114/api/login`**
 → O `API_SERVER` não foi embutido, e o cliente derivou a URL da API a partir do

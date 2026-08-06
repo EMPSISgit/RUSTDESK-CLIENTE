@@ -70,8 +70,12 @@ Valores vazios mantêm o comportamento padrão do RustDesk.
 ### Alternativa recomendada para forks: Variables do GitHub
 
 Em vez de commitar os valores, defina-os em
-**Settings → Secrets and variables → Actions → aba Variables**, com os mesmos
-nomes (`RENDEZVOUS_SERVER`, `RS_PUB_KEY`, `API_SERVER`, `REQUIRE_LOGIN`).
+**Settings → Secrets and variables → Actions**, com os mesmos nomes
+(`RENDEZVOUS_SERVER`, `RS_PUB_KEY`, `API_SERVER`, `REQUIRE_LOGIN`).
+
+Use **Repository variables** (ou Secrets — o workflow aceita os dois). O que
+**não** funciona é *Environment variables*: elas só chegam a jobs que declaram
+`environment:`, e nenhum job daqui declara — ficariam silenciosamente vazias.
 
 Vantagens: as Variables têm **prioridade sobre o `custom.env`**, então cada
 fork aponta para o seu próprio servidor sem alterar arquivo versionado — e o

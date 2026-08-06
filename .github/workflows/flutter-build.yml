@@ -102,10 +102,10 @@ jobs:
           # Actions -> Variables) tem prioridade sobre o custom.env. Assim cada
           # fork aponta para o seu servidor sem editar arquivo versionado, e o
           # Sync fork nunca da conflito. Vazias = usa o custom.env.
-          RENDEZVOUS_SERVER: ${{ vars.RENDEZVOUS_SERVER }}
-          RS_PUB_KEY: ${{ vars.RS_PUB_KEY }}
-          API_SERVER: ${{ vars.API_SERVER }}
-          REQUIRE_LOGIN: ${{ vars.REQUIRE_LOGIN }}
+          RENDEZVOUS_SERVER: ${{ vars.RENDEZVOUS_SERVER || secrets.RENDEZVOUS_SERVER }}
+          RS_PUB_KEY: ${{ vars.RS_PUB_KEY || secrets.RS_PUB_KEY }}
+          API_SERVER: ${{ vars.API_SERVER || secrets.API_SERVER }}
+          REQUIRE_LOGIN: ${{ vars.REQUIRE_LOGIN || secrets.REQUIRE_LOGIN }}
           # Aqui a variante vem da matriz: gera operador e cliente no mesmo
           # release. Nas demais plataformas vale o BUILD_VARIANT do custom.env.
           BUILD_VARIANT: ${{ matrix.variant }}
@@ -328,10 +328,10 @@ jobs:
           # Actions -> Variables) tem prioridade sobre o custom.env. Assim cada
           # fork aponta para o seu servidor sem editar arquivo versionado, e o
           # Sync fork nunca da conflito. Vazias = usa o custom.env.
-          RENDEZVOUS_SERVER: ${{ vars.RENDEZVOUS_SERVER }}
-          RS_PUB_KEY: ${{ vars.RS_PUB_KEY }}
-          API_SERVER: ${{ vars.API_SERVER }}
-          REQUIRE_LOGIN: ${{ vars.REQUIRE_LOGIN }}
+          RENDEZVOUS_SERVER: ${{ vars.RENDEZVOUS_SERVER || secrets.RENDEZVOUS_SERVER }}
+          RS_PUB_KEY: ${{ vars.RS_PUB_KEY || secrets.RS_PUB_KEY }}
+          API_SERVER: ${{ vars.API_SERVER || secrets.API_SERVER }}
+          REQUIRE_LOGIN: ${{ vars.REQUIRE_LOGIN || secrets.REQUIRE_LOGIN }}
           BUILD_VARIANT: ${{ matrix.variant }}
         run: python3 ./apply-custom.py || python ./apply-custom.py
 
@@ -493,10 +493,10 @@ jobs:
           # Actions -> Variables) tem prioridade sobre o custom.env. Assim cada
           # fork aponta para o seu servidor sem editar arquivo versionado, e o
           # Sync fork nunca da conflito. Vazias = usa o custom.env.
-          RENDEZVOUS_SERVER: ${{ vars.RENDEZVOUS_SERVER }}
-          RS_PUB_KEY: ${{ vars.RS_PUB_KEY }}
-          API_SERVER: ${{ vars.API_SERVER }}
-          REQUIRE_LOGIN: ${{ vars.REQUIRE_LOGIN }}
+          RENDEZVOUS_SERVER: ${{ vars.RENDEZVOUS_SERVER || secrets.RENDEZVOUS_SERVER }}
+          RS_PUB_KEY: ${{ vars.RS_PUB_KEY || secrets.RS_PUB_KEY }}
+          API_SERVER: ${{ vars.API_SERVER || secrets.API_SERVER }}
+          REQUIRE_LOGIN: ${{ vars.REQUIRE_LOGIN || secrets.REQUIRE_LOGIN }}
           BUILD_VARIANT: ${{ matrix.variant }}
         run: python3 ./apply-custom.py || python ./apply-custom.py
 
@@ -632,10 +632,10 @@ jobs:
           # Actions -> Variables) tem prioridade sobre o custom.env. Assim cada
           # fork aponta para o seu servidor sem editar arquivo versionado, e o
           # Sync fork nunca da conflito. Vazias = usa o custom.env.
-          RENDEZVOUS_SERVER: ${{ vars.RENDEZVOUS_SERVER }}
-          RS_PUB_KEY: ${{ vars.RS_PUB_KEY }}
-          API_SERVER: ${{ vars.API_SERVER }}
-          REQUIRE_LOGIN: ${{ vars.REQUIRE_LOGIN }}
+          RENDEZVOUS_SERVER: ${{ vars.RENDEZVOUS_SERVER || secrets.RENDEZVOUS_SERVER }}
+          RS_PUB_KEY: ${{ vars.RS_PUB_KEY || secrets.RS_PUB_KEY }}
+          API_SERVER: ${{ vars.API_SERVER || secrets.API_SERVER }}
+          REQUIRE_LOGIN: ${{ vars.REQUIRE_LOGIN || secrets.REQUIRE_LOGIN }}
           BUILD_VARIANT: ${{ matrix.variant }}
         run: python3 ./apply-custom.py || python ./apply-custom.py
 
@@ -965,10 +965,10 @@ jobs:
           # Actions -> Variables) tem prioridade sobre o custom.env. Assim cada
           # fork aponta para o seu servidor sem editar arquivo versionado, e o
           # Sync fork nunca da conflito. Vazias = usa o custom.env.
-          RENDEZVOUS_SERVER: ${{ vars.RENDEZVOUS_SERVER }}
-          RS_PUB_KEY: ${{ vars.RS_PUB_KEY }}
-          API_SERVER: ${{ vars.API_SERVER }}
-          REQUIRE_LOGIN: ${{ vars.REQUIRE_LOGIN }}
+          RENDEZVOUS_SERVER: ${{ vars.RENDEZVOUS_SERVER || secrets.RENDEZVOUS_SERVER }}
+          RS_PUB_KEY: ${{ vars.RS_PUB_KEY || secrets.RS_PUB_KEY }}
+          API_SERVER: ${{ vars.API_SERVER || secrets.API_SERVER }}
+          REQUIRE_LOGIN: ${{ vars.REQUIRE_LOGIN || secrets.REQUIRE_LOGIN }}
           BUILD_VARIANT: ${{ matrix.variant }}
         run: python3 ./apply-custom.py || python ./apply-custom.py
 
@@ -1251,10 +1251,10 @@ jobs:
           # Actions -> Variables) tem prioridade sobre o custom.env. Assim cada
           # fork aponta para o seu servidor sem editar arquivo versionado, e o
           # Sync fork nunca da conflito. Vazias = usa o custom.env.
-          RENDEZVOUS_SERVER: ${{ vars.RENDEZVOUS_SERVER }}
-          RS_PUB_KEY: ${{ vars.RS_PUB_KEY }}
-          API_SERVER: ${{ vars.API_SERVER }}
-          REQUIRE_LOGIN: ${{ vars.REQUIRE_LOGIN }}
+          RENDEZVOUS_SERVER: ${{ vars.RENDEZVOUS_SERVER || secrets.RENDEZVOUS_SERVER }}
+          RS_PUB_KEY: ${{ vars.RS_PUB_KEY || secrets.RS_PUB_KEY }}
+          API_SERVER: ${{ vars.API_SERVER || secrets.API_SERVER }}
+          REQUIRE_LOGIN: ${{ vars.REQUIRE_LOGIN || secrets.REQUIRE_LOGIN }}
           BUILD_VARIANT: ${{ matrix.variant }}
         run: python3 ./apply-custom.py || python ./apply-custom.py
 
@@ -1430,10 +1430,10 @@ jobs:
           # Actions -> Variables) tem prioridade sobre o custom.env. Assim cada
           # fork aponta para o seu servidor sem editar arquivo versionado, e o
           # Sync fork nunca da conflito. Vazias = usa o custom.env.
-          RENDEZVOUS_SERVER: ${{ vars.RENDEZVOUS_SERVER }}
-          RS_PUB_KEY: ${{ vars.RS_PUB_KEY }}
-          API_SERVER: ${{ vars.API_SERVER }}
-          REQUIRE_LOGIN: ${{ vars.REQUIRE_LOGIN }}
+          RENDEZVOUS_SERVER: ${{ vars.RENDEZVOUS_SERVER || secrets.RENDEZVOUS_SERVER }}
+          RS_PUB_KEY: ${{ vars.RS_PUB_KEY || secrets.RS_PUB_KEY }}
+          API_SERVER: ${{ vars.API_SERVER || secrets.API_SERVER }}
+          REQUIRE_LOGIN: ${{ vars.REQUIRE_LOGIN || secrets.REQUIRE_LOGIN }}
           BUILD_VARIANT: ${{ matrix.variant }}
         run: python3 ./apply-custom.py || python ./apply-custom.py
 
@@ -1774,10 +1774,10 @@ jobs:
           # Actions -> Variables) tem prioridade sobre o custom.env. Assim cada
           # fork aponta para o seu servidor sem editar arquivo versionado, e o
           # Sync fork nunca da conflito. Vazias = usa o custom.env.
-          RENDEZVOUS_SERVER: ${{ vars.RENDEZVOUS_SERVER }}
-          RS_PUB_KEY: ${{ vars.RS_PUB_KEY }}
-          API_SERVER: ${{ vars.API_SERVER }}
-          REQUIRE_LOGIN: ${{ vars.REQUIRE_LOGIN }}
+          RENDEZVOUS_SERVER: ${{ vars.RENDEZVOUS_SERVER || secrets.RENDEZVOUS_SERVER }}
+          RS_PUB_KEY: ${{ vars.RS_PUB_KEY || secrets.RS_PUB_KEY }}
+          API_SERVER: ${{ vars.API_SERVER || secrets.API_SERVER }}
+          REQUIRE_LOGIN: ${{ vars.REQUIRE_LOGIN || secrets.REQUIRE_LOGIN }}
           BUILD_VARIANT: ${{ matrix.variant }}
         run: python3 ./apply-custom.py || python ./apply-custom.py
 
@@ -1993,10 +1993,10 @@ jobs:
           # Actions -> Variables) tem prioridade sobre o custom.env. Assim cada
           # fork aponta para o seu servidor sem editar arquivo versionado, e o
           # Sync fork nunca da conflito. Vazias = usa o custom.env.
-          RENDEZVOUS_SERVER: ${{ vars.RENDEZVOUS_SERVER }}
-          RS_PUB_KEY: ${{ vars.RS_PUB_KEY }}
-          API_SERVER: ${{ vars.API_SERVER }}
-          REQUIRE_LOGIN: ${{ vars.REQUIRE_LOGIN }}
+          RENDEZVOUS_SERVER: ${{ vars.RENDEZVOUS_SERVER || secrets.RENDEZVOUS_SERVER }}
+          RS_PUB_KEY: ${{ vars.RS_PUB_KEY || secrets.RS_PUB_KEY }}
+          API_SERVER: ${{ vars.API_SERVER || secrets.API_SERVER }}
+          REQUIRE_LOGIN: ${{ vars.REQUIRE_LOGIN || secrets.REQUIRE_LOGIN }}
           BUILD_VARIANT: ${{ matrix.variant }}
         run: python3 ./apply-custom.py || python ./apply-custom.py
 
@@ -2080,10 +2080,10 @@ jobs:
           # Actions -> Variables) tem prioridade sobre o custom.env. Assim cada
           # fork aponta para o seu servidor sem editar arquivo versionado, e o
           # Sync fork nunca da conflito. Vazias = usa o custom.env.
-          RENDEZVOUS_SERVER: ${{ vars.RENDEZVOUS_SERVER }}
-          RS_PUB_KEY: ${{ vars.RS_PUB_KEY }}
-          API_SERVER: ${{ vars.API_SERVER }}
-          REQUIRE_LOGIN: ${{ vars.REQUIRE_LOGIN }}
+          RENDEZVOUS_SERVER: ${{ vars.RENDEZVOUS_SERVER || secrets.RENDEZVOUS_SERVER }}
+          RS_PUB_KEY: ${{ vars.RS_PUB_KEY || secrets.RS_PUB_KEY }}
+          API_SERVER: ${{ vars.API_SERVER || secrets.API_SERVER }}
+          REQUIRE_LOGIN: ${{ vars.REQUIRE_LOGIN || secrets.REQUIRE_LOGIN }}
           BUILD_VARIANT: ${{ matrix.variant }}
         run: python3 ./apply-custom.py || python ./apply-custom.py
 
@@ -2155,10 +2155,10 @@ jobs:
           # Actions -> Variables) tem prioridade sobre o custom.env. Assim cada
           # fork aponta para o seu servidor sem editar arquivo versionado, e o
           # Sync fork nunca da conflito. Vazias = usa o custom.env.
-          RENDEZVOUS_SERVER: ${{ vars.RENDEZVOUS_SERVER }}
-          RS_PUB_KEY: ${{ vars.RS_PUB_KEY }}
-          API_SERVER: ${{ vars.API_SERVER }}
-          REQUIRE_LOGIN: ${{ vars.REQUIRE_LOGIN }}
+          RENDEZVOUS_SERVER: ${{ vars.RENDEZVOUS_SERVER || secrets.RENDEZVOUS_SERVER }}
+          RS_PUB_KEY: ${{ vars.RS_PUB_KEY || secrets.RS_PUB_KEY }}
+          API_SERVER: ${{ vars.API_SERVER || secrets.API_SERVER }}
+          REQUIRE_LOGIN: ${{ vars.REQUIRE_LOGIN || secrets.REQUIRE_LOGIN }}
           BUILD_VARIANT: ${{ matrix.variant }}
         run: python3 ./apply-custom.py || python ./apply-custom.py
 

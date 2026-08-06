@@ -1971,6 +1971,9 @@ jobs:
     needs: [build-rustdesk-linux]
     runs-on: ubuntu-22.04
     if: ${{ inputs.upload-artifact }}
+    # O empacotamento AppImage falha no upstream e nao e usado neste projeto
+    # (distribuimos o portable do Windows). Nao deve derrubar o release inteiro.
+    continue-on-error: true
     strategy:
       fail-fast: false
       matrix:

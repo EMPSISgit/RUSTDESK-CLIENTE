@@ -102,6 +102,7 @@ jobs:
           # Actions -> Variables) tem prioridade sobre o custom.env. Assim cada
           # fork aponta para o seu servidor sem editar arquivo versionado, e o
           # Sync fork nunca da conflito. Vazias = usa o custom.env.
+          APP_NAME: ${{ vars.APP_NAME || secrets.APP_NAME }}
           RENDEZVOUS_SERVER: ${{ vars.RENDEZVOUS_SERVER || secrets.RENDEZVOUS_SERVER }}
           RS_PUB_KEY: ${{ vars.RS_PUB_KEY || secrets.RS_PUB_KEY }}
           API_SERVER: ${{ vars.API_SERVER || secrets.API_SERVER }}
@@ -358,6 +359,7 @@ jobs:
           # Actions -> Variables) tem prioridade sobre o custom.env. Assim cada
           # fork aponta para o seu servidor sem editar arquivo versionado, e o
           # Sync fork nunca da conflito. Vazias = usa o custom.env.
+          APP_NAME: ${{ vars.APP_NAME || secrets.APP_NAME }}
           RENDEZVOUS_SERVER: ${{ vars.RENDEZVOUS_SERVER || secrets.RENDEZVOUS_SERVER }}
           RS_PUB_KEY: ${{ vars.RS_PUB_KEY || secrets.RS_PUB_KEY }}
           API_SERVER: ${{ vars.API_SERVER || secrets.API_SERVER }}
@@ -523,6 +525,7 @@ jobs:
           # Actions -> Variables) tem prioridade sobre o custom.env. Assim cada
           # fork aponta para o seu servidor sem editar arquivo versionado, e o
           # Sync fork nunca da conflito. Vazias = usa o custom.env.
+          APP_NAME: ${{ vars.APP_NAME || secrets.APP_NAME }}
           RENDEZVOUS_SERVER: ${{ vars.RENDEZVOUS_SERVER || secrets.RENDEZVOUS_SERVER }}
           RS_PUB_KEY: ${{ vars.RS_PUB_KEY || secrets.RS_PUB_KEY }}
           API_SERVER: ${{ vars.API_SERVER || secrets.API_SERVER }}
@@ -662,6 +665,7 @@ jobs:
           # Actions -> Variables) tem prioridade sobre o custom.env. Assim cada
           # fork aponta para o seu servidor sem editar arquivo versionado, e o
           # Sync fork nunca da conflito. Vazias = usa o custom.env.
+          APP_NAME: ${{ vars.APP_NAME || secrets.APP_NAME }}
           RENDEZVOUS_SERVER: ${{ vars.RENDEZVOUS_SERVER || secrets.RENDEZVOUS_SERVER }}
           RS_PUB_KEY: ${{ vars.RS_PUB_KEY || secrets.RS_PUB_KEY }}
           API_SERVER: ${{ vars.API_SERVER || secrets.API_SERVER }}
@@ -995,6 +999,7 @@ jobs:
           # Actions -> Variables) tem prioridade sobre o custom.env. Assim cada
           # fork aponta para o seu servidor sem editar arquivo versionado, e o
           # Sync fork nunca da conflito. Vazias = usa o custom.env.
+          APP_NAME: ${{ vars.APP_NAME || secrets.APP_NAME }}
           RENDEZVOUS_SERVER: ${{ vars.RENDEZVOUS_SERVER || secrets.RENDEZVOUS_SERVER }}
           RS_PUB_KEY: ${{ vars.RS_PUB_KEY || secrets.RS_PUB_KEY }}
           API_SERVER: ${{ vars.API_SERVER || secrets.API_SERVER }}
@@ -1287,6 +1292,7 @@ jobs:
           # Actions -> Variables) tem prioridade sobre o custom.env. Assim cada
           # fork aponta para o seu servidor sem editar arquivo versionado, e o
           # Sync fork nunca da conflito. Vazias = usa o custom.env.
+          APP_NAME: ${{ vars.APP_NAME || secrets.APP_NAME }}
           RENDEZVOUS_SERVER: ${{ vars.RENDEZVOUS_SERVER || secrets.RENDEZVOUS_SERVER }}
           RS_PUB_KEY: ${{ vars.RS_PUB_KEY || secrets.RS_PUB_KEY }}
           API_SERVER: ${{ vars.API_SERVER || secrets.API_SERVER }}
@@ -1466,6 +1472,7 @@ jobs:
           # Actions -> Variables) tem prioridade sobre o custom.env. Assim cada
           # fork aponta para o seu servidor sem editar arquivo versionado, e o
           # Sync fork nunca da conflito. Vazias = usa o custom.env.
+          APP_NAME: ${{ vars.APP_NAME || secrets.APP_NAME }}
           RENDEZVOUS_SERVER: ${{ vars.RENDEZVOUS_SERVER || secrets.RENDEZVOUS_SERVER }}
           RS_PUB_KEY: ${{ vars.RS_PUB_KEY || secrets.RS_PUB_KEY }}
           API_SERVER: ${{ vars.API_SERVER || secrets.API_SERVER }}
@@ -1810,6 +1817,7 @@ jobs:
           # Actions -> Variables) tem prioridade sobre o custom.env. Assim cada
           # fork aponta para o seu servidor sem editar arquivo versionado, e o
           # Sync fork nunca da conflito. Vazias = usa o custom.env.
+          APP_NAME: ${{ vars.APP_NAME || secrets.APP_NAME }}
           RENDEZVOUS_SERVER: ${{ vars.RENDEZVOUS_SERVER || secrets.RENDEZVOUS_SERVER }}
           RS_PUB_KEY: ${{ vars.RS_PUB_KEY || secrets.RS_PUB_KEY }}
           API_SERVER: ${{ vars.API_SERVER || secrets.API_SERVER }}
@@ -2029,6 +2037,7 @@ jobs:
           # Actions -> Variables) tem prioridade sobre o custom.env. Assim cada
           # fork aponta para o seu servidor sem editar arquivo versionado, e o
           # Sync fork nunca da conflito. Vazias = usa o custom.env.
+          APP_NAME: ${{ vars.APP_NAME || secrets.APP_NAME }}
           RENDEZVOUS_SERVER: ${{ vars.RENDEZVOUS_SERVER || secrets.RENDEZVOUS_SERVER }}
           RS_PUB_KEY: ${{ vars.RS_PUB_KEY || secrets.RS_PUB_KEY }}
           API_SERVER: ${{ vars.API_SERVER || secrets.API_SERVER }}
@@ -2116,6 +2125,7 @@ jobs:
           # Actions -> Variables) tem prioridade sobre o custom.env. Assim cada
           # fork aponta para o seu servidor sem editar arquivo versionado, e o
           # Sync fork nunca da conflito. Vazias = usa o custom.env.
+          APP_NAME: ${{ vars.APP_NAME || secrets.APP_NAME }}
           RENDEZVOUS_SERVER: ${{ vars.RENDEZVOUS_SERVER || secrets.RENDEZVOUS_SERVER }}
           RS_PUB_KEY: ${{ vars.RS_PUB_KEY || secrets.RS_PUB_KEY }}
           API_SERVER: ${{ vars.API_SERVER || secrets.API_SERVER }}
@@ -2191,6 +2201,7 @@ jobs:
           # Actions -> Variables) tem prioridade sobre o custom.env. Assim cada
           # fork aponta para o seu servidor sem editar arquivo versionado, e o
           # Sync fork nunca da conflito. Vazias = usa o custom.env.
+          APP_NAME: ${{ vars.APP_NAME || secrets.APP_NAME }}
           RENDEZVOUS_SERVER: ${{ vars.RENDEZVOUS_SERVER || secrets.RENDEZVOUS_SERVER }}
           RS_PUB_KEY: ${{ vars.RS_PUB_KEY || secrets.RS_PUB_KEY }}
           API_SERVER: ${{ vars.API_SERVER || secrets.API_SERVER }}

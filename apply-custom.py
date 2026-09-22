@@ -67,7 +67,6 @@ VARIANTS = {
     "cliente": {
         "hard": [
             ("conn-type", "incoming"),
-            ("disable-installation", "Y"),
             ("disable-account", "Y"),
             ("disable-settings", "Y"),
         ],
